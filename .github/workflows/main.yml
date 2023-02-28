@@ -1,39 +1,39 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Update work item state when PR is merged, opened, closed or when branch is created
+name: "Add Issue/PR to Project"
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
+  issues:
+    types: [opened]
   pull_request:
-    branches: [ "main" ]
-    types: [opened, closed, edited]
-  push:
-    branches: [ "main" ]
+    branches: [opened]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  alert:
+  add_to_project:
     # The type of runner that the job will run on
+    name: Add to Project
     runs-on: ubuntu-latest
-    name: Test workflow
-    
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-        env: 
-          gh_token : '${{ secrets.GH_TOKEN }}'   
-          ado_token: '${{ secrets.ADO_PERSONAL_ACCESS_TOKEN }}'
-          ado_organization: '${{ secrets.ADO_ORGANIZATION }}'
-          ado_project: '${{ secrets.ADO_PROJECT }}'
-          closedstate: 'Done'
-          propenstate: 'Ready'
-          inprogressstate: 'In Progress' 
-          ghrepo_owner: 'gavinburn'
-          ghrepo: 'AnotherTest'
-          pull_number: ${{github.event.number}} 
-          branch_name: ${{ github.ref }}
+      - uses: actions/checkout@v2
+      - uses: austenstone/project-add@main
+        with: 
+          user:  gavinburn 
+          project-number: 1
+          github-token: "${{ secrets.MY_TOKEN }}"
+        id: project-add
+      - uses: austenstone/project-update@main
+        with:
+          user: ${{ github.repository_owner }}
+          project-number: 5
+          github-token: "${{ secrets.GAVING_TESTING_SECRET }}"
+          item-id: ${{ steps.project-add.outputs.id }}
+          field-names: product,priority
+          field-values: back-end,high
 
       
