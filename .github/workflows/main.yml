@@ -29,8 +29,8 @@ jobs:
         id: project-add
       - uses: austenstone/project-update@main
         with:
-          user: ${{ github.repository_owner }}
-          project-number: 5
+          user: ${{ github.gavinburn }}
+          project-number: 1
           github-token: "${{ secrets.GAVING_TESTING_SECRET }}"
           item-id: ${{ steps.project-add.outputs.id }}
           field-names: product,priority
